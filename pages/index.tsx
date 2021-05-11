@@ -9,17 +9,27 @@ import {
   FormHelperText,
   FormLabel,
   Heading,
+  Link,
   SkeletonText,
-  Stack,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
+import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Layout from "../components/layout";
 
 type FormValues = {
   link: string;
+};
+
+type ShortenLinkResponse = {
+  short_link: string;
+};
+
+type ShortenLinkError = {
+  error: string;
+  error_description: string;
 };
 
 type StatusValues = "initial" | "error" | "success";
@@ -34,21 +44,35 @@ export default function Home() {
   } = useForm<FormValues>();
 
   const [status, setStatus] = useState<StatusValues>("initial");
+  const [responseError, setResponseError] = useState("");
+  const [responseLink, setResponseLink] = useState("");
 
-  function onSubmit(values) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        alert(JSON.stringify(values, null, 2));
-        setStatus("success");
-        resolve("");
-      }, 3000);
-    });
+  async function onSubmit({ link }: FormValues) {
+    try {
+      console.log({ link });
+      const response = await axios.post<ShortenLinkResponse>(
+        "/api/shorten_link",
+        { link }
+      );
+      setStatus("success");
+      setResponseLink(response.data?.short_link);
+    } catch (e) {
+      const error = e as AxiosError<ShortenLinkError>;
+      setStatus("error");
+      setResponseError(
+        error.response?.data?.error_description || "Something went wrong!"
+      );
+    }
   }
   return (
     <Layout>
       <Box w="95%" boxShadow="lg" bg={cardBg}>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl id="shortlink" p={16} isInvalid={!!errors.link}>
+          <FormControl
+            id="shortlink"
+            p={16}
+            isInvalid={!!errors.link || !!responseError}
+          >
             <FormLabel>
               <Heading as="h2" size="2xl">
                 Shave your link
@@ -71,6 +95,7 @@ export default function Home() {
               We'll make a shiny haircut to your url.
             </FormHelperText>
             <FormErrorMessage>{errors.link?.message}</FormErrorMessage>
+            <FormErrorMessage>{responseError}</FormErrorMessage>
             <Button
               mt={4}
               mb={4}
@@ -82,14 +107,19 @@ export default function Home() {
             >
               Shave it!
             </Button>
-            {isSubmitSuccessful && (
+            {isSubmitSuccessful && !responseError && (
               <SkeletonText isLoaded={status === "success"}>
                 <Divider />
                 <Box>
                   <Heading as="h3" size="xl">
                     It's shaved!
                   </Heading>
-                  <Text>Response url</Text>
+                  <Text>
+                    Go away!{" "}
+                    <Link href={responseLink} isExternal>
+                      This should be your destination!
+                    </Link>
+                  </Text>
                 </Box>
               </SkeletonText>
             )}
