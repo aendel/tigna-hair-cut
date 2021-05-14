@@ -11,7 +11,11 @@ import Image from "next/image";
 import React from "react";
 import styles from "../styles/Home.module.css";
 
-export default function Layout({ children }) {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
   const { toggleColorMode, colorMode } = useColorMode();
   const headerBg = useColorModeValue("teal.500", "teal.200");
   return (
