@@ -49,7 +49,6 @@ export default function Home() {
 
   async function onSubmit({ link }: FormValues) {
     try {
-      console.log({ link });
       const response = await axios.post<ShortenLinkResponse>(
         "/api/shorten_link",
         { link }
@@ -100,9 +99,8 @@ export default function Home() {
               mt={4}
               mb={4}
               isFullWidth
-              colorScheme="teal"
               isLoading={isSubmitting}
-              rightIcon={<ExternalLinkIcon />}
+              rightIcon={<LinkIcon />}
               type="submit"
             >
               Shave it!
@@ -110,16 +108,13 @@ export default function Home() {
             {isSubmitSuccessful && !responseError && (
               <SkeletonText isLoaded={status === "success"}>
                 <Divider />
-                <Box>
-                  <Heading as="h3" size="xl">
-                    It's shaved!
-                  </Heading>
-                  <Text>
-                    Go away!{" "}
+                <Box mt={2}>
+                  <Heading as="h4" size="xl">
+                    It's shaved!{" "}
                     <Link href={responseLink} isExternal>
-                      This should be your destination!
+                      See what you have got! <ExternalLinkIcon />
                     </Link>
-                  </Text>
+                  </Heading>
                 </Box>
               </SkeletonText>
             )}

@@ -40,9 +40,8 @@ export default function Layout({ children }: LayoutProps) {
         alignItems="center"
         justifyContent="space-around"
       >
-        <Heading colorScheme="teal">Tigna's Urls Shortener</Heading>
+        <Heading>Tigna's Urls Shortener</Heading>
         <IconButton
-          colorScheme="teal"
           onClick={toggleColorMode}
           aria-label="Toggle theme"
           icon={colorMode === "dark" ? <SunIcon /> : <MoonIcon />}
