@@ -104,7 +104,7 @@ export default function Home() {
               <Divider />
               <Box mt={2}>
                 <Heading as="h2" size="xl">
-                  It's shaved!
+                  It's shaved!{" "}
                   <Link href={`https://${responseLink}`} isExternal>
                     See what you have got! <ExternalLinkIcon />
                   </Link>
